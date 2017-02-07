@@ -60,7 +60,7 @@
     <Icon Id="ProductIcon" SourceFile="..\..\..\..\SpectraLogicBCPA\Images\logo.ico"/>
     <Property Id="ARPPRODUCTICON" Value="ProductIcon"/>
     <CustomAction Id="SetLaunchApplicationTarget" Property="WixShellExecTarget" Value="[#FILE_DataProtectionApp.exe]" />
-    <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="no" Execute="deferred"/>
+    <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="no" />
     <UI Id="LaunchApplication">
       <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="SetLaunchApplicationTarget">
         <![CDATA[NOT Installed AND VersionNT=601]]>
