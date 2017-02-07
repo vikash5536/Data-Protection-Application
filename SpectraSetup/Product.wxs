@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <?define ProductName = "Data Protection Application 1.0.1.5"?>
+  <?define ProductCode = "{F53E9FF1-91D5-4972-A0D7-CA58B6208D3A}"?>
+  <?define UpgradeCode = "8CF8F83C-6C1B-418B-941A-A9CE01D8B9AF"?>
+  <?define ProductVersion = "1.0.1.5"?>
+  <Product Id="$(var.ProductCode)" Name="$(var.ProductName)"  Language="1033" Version="$(var.ProductVersion)"  Manufacturer="Spectra Logic" UpgradeCode="$(var.UpgradeCode)">
+    <Package InstallerVersion="200" Compressed="yes"  InstallPrivileges="elevated" InstallScope="perMachine" Platform="x64" />
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    <UIRef Id="WixUI_InstallDir" />
+    <UIRef Id="WixUI_ErrorProgressText" />
+    <Upgrade Id="$(var.UpgradeCode)">
+      <UpgradeVersion
+         Minimum="1.0.0.0" Maximum="99.0.0.0"
+         Property="PREVIOUSVERSIONSINSTALLED"
+         IncludeMinimum="yes" IncludeMaximum="no" />
+    </Upgrade>
+    <Property Id="PREVIOUSVERSIONSINSTALLED" Secure="yes" />
+    <Upgrade Id="{18DC4A9A-23A6-4094-A4F0-EF76AF440560}">
+      <UpgradeVersion OnlyDetect="no" Property="ANYTHINGBUTREMOVE" IncludeMinimum="yes" Minimum="1.0.0.0" Maximum="15.0.0.0" IncludeMaximum="yes"/>
+    </Upgrade>
+    <MajorUpgrade Schedule="afterInstallInitialize"
+     DowngradeErrorMessage="A later version of [ProductName] is already installed. Setup will now exit."/>
+    <InstallExecuteSequence>
+      <Custom Action="DeleteLogFile" After="InstallFinalize"
+           >REMOVE="ALL"</Custom>
+      <Custom Action="CloseAppsPrompt" After="CostFinalize"></Custom>
+      <ScheduleReboot After="InstallFinalize">NOT Installed AND  NOT VersionNT=601</ScheduleReboot>
+      
+
+    </InstallExecuteSequence>
+    <Property Id="PromptToCloseProcesses" Value="Data Protection Application" />
+    <Property Id="PromptToCloseDisplayNames" Value="Data Protection Application" />
+    <CustomAction Id="CloseAppsPrompt" BinaryKey="SpectraCustomAction.CA.dll"
+             DllEntry="ClosePrompt" Return="check" />
+    <Binary Id="SpectraCustomAction.CA.dll"
+           SourceFile="..\..\..\..\SpectraCustomAction\bin\x64\Release\SpectraCustomAction.CA.dll" />
+    <CustomAction Id="DeleteLogFile"
+        Return="check"
+          Execute="immediate"
+          BinaryKey="SpectraCustomAction.CA.dll"
+          DllEntry="DeleteLogFile"
+    />
+    <UI>
+
+      <Publish Dialog="WelcomeDlg"
+               Control="Next"
+               Event="NewDialog"
+               Value="InstallDirDlg"
+                Order="2">1</Publish>
+
+      <Publish Dialog="InstallDirDlg"
+               Control="Back"
+               Event="NewDialog"
+               Value="WelcomeDlg"
+                Order="2">1</Publish>
+    </UI>
+
+    <MediaTemplate EmbedCab="yes"/>
+    <Icon Id="ProductIcon" SourceFile="..\..\..\..\SpectraLogicBCPA\Images\logo.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="ProductIcon"/>
+    <CustomAction Id="SetLaunchApplicationTarget" Property="WixShellExecTarget" Value="[#FILE_DataProtectionApp.exe]" />
+    <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="no" Execute="deferred"/>
+    <UI Id="LaunchApplication">
+      <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="SetLaunchApplicationTarget">
+        <![CDATA[NOT Installed AND VersionNT=601]]>
+      </Publish>
+      <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication" >
+        <![CDATA[NOT Installed AND VersionNT=601]]>
+      </Publish>
+    </UI>
+    <Feature Id="ProductFeature" Title="Spectra Logic" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="ProductMenuComponents" />
+      <ComponentRef Id="ApplicationShortcutDesktop" />
+      <ComponentRef Id="CleanupMainApplicationFolder" />
+      <ComponentRef Id="CreateRegistry" />
+    </Feature>
+    <Property Id="APPLICATIONFOLDER" Secure="yes">
+      <RegistrySearch Id="APPLICATIONFOLDER_REGSEARCH"
+			 Root="HKCU"
+			       Key="Software\Spectra Logic\Data Protection Application" Type="raw"  Name="Path" />
+    </Property>
+
+  </Product>
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir" >
+      <Directory Id="ProgramFiles64Folder" >
+        <Directory Id="INSTALLFOLDER" Name="Spectra Logic"  >
+          <Directory Id="File_Transfer_App" Name="File Transfer App" >
+            <Component Id="FFile_Transfer_App" Guid="{0E741F87-6EC9-439D-BA27-189403FFEB06}" Win64="yes" Location="either">
+              <CreateFolder />
+              <File Id="FFileTransferApp.exe" Source="..\..\..\..\FileTransferApp\bin\x64\Release\FileTransferApp.exe" ProcessorArchitecture="x64"/>
+              <File Id="FTALog4netdll" Source="..\..\..\..\FileTransferApp\bin\x64\Release\log4net.dll" ProcessorArchitecture="x64"></File>
+              <File Id="FTALog4NetConfig" Source="..\..\..\..\FileTransferApp\log4net.config" ProcessorArchitecture="x64"></File>
+              <File Id="FTACommonLibrarydll" Source="..\..\..\..\FileTransferApp\bin\x64\Release\CommonLibrary.dll" ProcessorArchitecture="x64"></File>
+              <File Id="FTAds3_net_sdkdll" Source="..\..\..\..\FileTransferApp\bin\x64\Release\ds3_net_sdk.dll" ProcessorArchitecture="x64"></File>
+              <File Id="FTAApp.config" Source="..\..\..\..\FileTransferApp\bin\x64\Release\FileTransferApp.exe.config" KeyPath="yes" ProcessorArchitecture="x64"></File>
+
+            </Component>
+          </Directory>
+        </Directory>
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="Spectra Logic"/>
+
+      </Directory>
+      <Directory Id="DesktopFolder" Name="Desktop"></Directory>
+      <Directory Id="APPLICATIONFOLDER">
+
+      </Directory>
+    </Directory>
+    <Feature Id="File_Transfer_App" Title="testfolder" Level="1">
+      <ComponentRef Id="FFile_Transfer_App"/>
+    </Feature>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER" >
+
+      <Component Id="CMP_DPA" Guid="{B44A9F0F-DCD7-480D-956A-257889CB8D08}" Win64="yes">
+
+        <File Id="FILE_DataProtectionApp.exe" Source="..\..\..\..\SpectraLogicBCPA\bin\x64\Release\Data Protection Application.exe" ProcessorArchitecture="x64"/>
+      </Component>
+      <Component Id="Log4netdll" Guid="{88D5E33C-DC9F-48CD-BA79-595B39A7C675}" Win64="yes">
+        <File Id="FlLog4netdll" Source="..\..\..\..\SpectraLogicBCPA\bin\x64\Release\log4net.dll" KeyPath="yes" ProcessorArchitecture="x64"></File>
+      </Component>
+      <Component Id="Log4NetConfig" Guid="{0C866C09-ECFE-4939-BE31-5B25595395E0}" Win64="yes">
+        <File Id="FLog4NetConfig" Source="..\..\..\..\SpectraLogicBCPA\log4net.config" KeyPath="yes" ProcessorArchitecture="x64"></File>
+      </Component>
+      <Component Id="CommonLibrarydll" Guid="{01FA7659-0178-4E3D-88A7-07A113A80B65}" Win64="yes" >
+        <File Id="CommonLibrarydll" Source="..\..\..\..\SpectraLogicBCPA\bin\x64\Release\CommonLibrary.dll" KeyPath="yes" ProcessorArchitecture="x64"></File>
+      </Component>
+      <Component Id="ds3_net_sdkdll" Guid="{8A1AD1A4-B603-455F-953A-01DA04B50E9D}" Win64="yes">
+        <File Id="ds3_net_sdkdll" Source="..\..\..\..\SpectraLogicBCPA\bin\x64\Release\ds3_net_sdk.dll" KeyPath="yes" ProcessorArchitecture="x64"></File>
+      </Component>
+      <Component Id="FolderSelectdll" Guid="{EC61E60D-6CB4-4F04-9567-13B6B180F6EC}" Win64="yes">
+        <File Id="FolderSelectdll" Source="..\..\..\..\SpectraLogicBCPA\bin\x64\Release\FolderSelect.dll" KeyPath="yes" ProcessorArchitecture="x64"></File>
+      </Component>
+      <Component Id="Microsoft.Win32.TaskSchedulerdll" Guid="{C0D3A9B9-16CE-4C3F-AE11-43D54E9B43D6}" Win64="yes">
+        <File Id="FMicrosoft.Win32.TaskSchedulerdll" Source="..\..\..\..\SpectraLogicBCPA\bin\x64\Release\Microsoft.Win32.TaskScheduler.dll" KeyPath="yes" ProcessorArchitecture="x64"></File>      
+      </Component>
+      <Component Id="Xceed.Wpf.Toolkitdll" Guid="{2761C786-FFFD-4E3B-8F97-89AB491F47EB}" Win64="yes">
+        <File Id="FXceed.Wpf.Toolkitdll" Source="..\..\..\..\SpectraLogicBCPA\bin\x64\Release\Xceed.Wpf.Toolkit.dll" KeyPath="yes" ProcessorArchitecture="x64"></File>
+      </Component>
+      <Component Id="App.config" Guid="{3B0C2DC0-48D3-40D4-9499-CDC787C93C01}" Win64="yes" >
+        <File Id="FApp.config" Source="..\..\..\..\SpectraLogicBCPA\bin\x64\Release\Data Protection Application.exe.config" KeyPath="yes" ProcessorArchitecture="x64"></File>
+      </Component>
+
+    </ComponentGroup>
+
+    <ComponentGroup Id="ProductMenuComponents" Directory="ApplicationProgramsFolder" >
+      <Component Id="ApplicationShortcut" Guid="{7CC731DB-376D-48DA-B51D-438B571F7C4A}" Win64="yes">
+        <Shortcut
+            Id="ApplicationStartMenuShortcut"
+            Name="Data Protection Application"
+            Description="Spectra Logic"
+            Target="[INSTALLFOLDER]Data Protection Application.exe"
+            WorkingDirectory="APPLICATIONROOTDIRECTORY"/>
+        <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
+        <RegistryValue
+            Root="HKCU"
+            Key="Software\Spectra Logic\Data Protection Application"
+            Name="-" Type="integer" Value="1"
+            KeyPath="yes" />
+        <RegistryKey
+             Root="HKCU"
+             Key="Software\Spectra Logic\Data Protection Application" />
+
+      </Component>
+    </ComponentGroup>
+    <DirectoryRef Id="DesktopFolder">
+      <Component Id="ApplicationShortcutDesktop" Guid="{A3AEB042-A157-400C-B7F1-3483096AE30A}" Win64="yes">
+        <Shortcut Id="ApplicationDesktopShortcut" Name="Data Protection Application"  Target="[INSTALLFOLDER]Data Protection Application.exe" WorkingDirectory="APPLICATIONROOTDIRECTORY"  />
+        <RemoveFolder Id="RemoveDesktopFolder" Directory="DesktopFolder" On="uninstall" />
+        <RegistryValue Root="HKCU"   Key="Software\Spectra Logic\Data Protection Application"  Name="installed" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="APPLICATIONFOLDER" >
+      <Component Id="CleanupMainApplicationFolder" Guid="{A1980E38-CBA4-46A7-A84D-76366E26FD94}" Win64="yes">
+        <RegistryValue Root="HKCU"   Key="Software\Spectra Logic\Data Protection Application" Name="Path" Type="string" Value="[INSTALLFOLDER]" KeyPath="yes" />
+        <!-- We need to use APPLICATIONFOLDER variable here or RemoveFolderEx will not remove on "uninstall". -->
+        <util:RemoveFolderEx On="uninstall" Property="APPLICATIONFOLDER" />
+        <CreateFolder/>
+      </Component>
+      <Component Id="CreateRegistry" Guid="{F4B0BAA6-247B-4215-BF04-28C03691F646}" Win64="yes" Permanent="yes" >
+        <Condition >VersionNT=603</Condition>
+        <RegistryKey  Root="HKLM"  Key="Software\Microsoft\Windows\CurrentVersion\Policies\System"  ForceCreateOnInstall="yes" >
+          <RegistryValue Type="integer" Name="EnableLinkedConnections" Value="1" KeyPath="yes"  />
+        </RegistryKey >
+      </Component>
+
+    </DirectoryRef>
+
+
+  </Fragment>
+</Wix>

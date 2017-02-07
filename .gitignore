@@ -1,0 +1,6 @@
+### .Net
+.vs/
+bin/
+obj/
+*.exe
+*.msi

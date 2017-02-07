@@ -1,0 +1,27 @@
+﻿<Window x:Class="DataProtectionApplication.TaskSchedulingApp.Views.CustomPopup"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DataProtectionApplication.TaskSchedulingApp.Views"
+        mc:Ignorable="d"
+        Title="CustomPopup" Height="200" Width="400"  WindowStyle="None" AllowsTransparency="True" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
+    <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown">
+        <Border BorderThickness="1" BorderBrush="#00416a" Margin="0,10,0,0" />
+        <Grid  Name="ContainerGrid">
+            <Border BorderThickness="1" BorderBrush="#00416a" Height="10" VerticalAlignment="Top">
+                <Grid Name="TitleGrid" VerticalAlignment="Top" Background="#00416a" Height="10" Margin="0" MouseLeftButtonDown="Grid_MouseLeftButtonDown">
+                </Grid>
+            </Border>
+            <Label x:Name="PopupTitle" HorizontalAlignment="Left" FontFamily="Verdana" FontSize="18" Margin="43,11,0,0" FontWeight="Bold" Width="317" Height="33" VerticalAlignment="Top"/>
+            <Button x:Name="btnclose" TabIndex="7" Content="X" Style="{StaticResource HoverButton}" Foreground="Black"  HorizontalAlignment="Right" Width="18" Height="22" Click="btnclose_Click" Margin="0,14,10,0" FontSize="22" BorderBrush="White" FontFamily="Verdana" FontWeight="Bold" Background="Transparent" VerticalAlignment="Top"/>
+
+            <Image x:Name="PopUpimage" Visibility="Visible" HorizontalAlignment="Left" Width="25" Height="25" Margin="8,14,0,0" VerticalAlignment="Top"/>
+
+            <TextBlock x:Name="PopupText" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" VerticalAlignment="Center" Margin="10,70,10,45" FontFamily="Verdana" FontSize="14" Height="85" TextWrapping="Wrap" TextBlock.TextAlignment="Center" TextTrimming="CharacterEllipsis"/>
+            <Button x:Name="PopupBtnFirst" IsDefault="True"  Style="{StaticResource RoundButtonTemplate}" Visibility="Hidden" Click="PopupBtnFirst_Click" Margin="89,155,0,0" FontSize="14" BorderBrush="White"  RenderTransformOrigin="0.668,-0.008" FontFamily="Arial Black" FontWeight="Bold" Height="28" VerticalAlignment="Top" HorizontalAlignment="Left" Width="71"/>
+            <Button x:Name="PopupBtnSecond"  Style="{StaticResource RoundButtonTemplate}" Visibility="Hidden" Click="PopupBtnSecond_Click" Margin="0,155,89,0" FontSize="14" BorderBrush="White"  RenderTransformOrigin="0.668,-0.008" FontFamily="Arial Black" FontWeight="Bold" Height="28" VerticalAlignment="Top" HorizontalAlignment="Right" Width="71"/>
+            <Button x:Name="PopupBtnOk" IsDefault="True" Style="{StaticResource RoundButtonTemplate}" Visibility="Hidden" Content="Ok" Click="PopupBtnOk_Click" Margin="164,155,165,0" FontSize="14" BorderBrush="White"  RenderTransformOrigin="0.668,-0.008" FontFamily="Arial Black" FontWeight="Bold" Height="28" VerticalAlignment="Top"/>
+        </Grid>
+    </Grid>
+</Window>
